@@ -1,0 +1,10 @@
+{
+  "id": "http",
+  "description": "HTTP plugin",
+  "gendevices": 0,
+  "single": 0,
+  "module": "index.js",
+  "params": [],
+  "genrules": {},
+  "commands": []
+}
