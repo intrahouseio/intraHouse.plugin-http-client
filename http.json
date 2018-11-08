@@ -6,5 +6,22 @@
   "module": "index.js",
   "params": [],
   "genrules": {},
-  "commands": []
+  "commands": [],
+  "chpattern": [
+    { "name": "url", "note": "Url", "type": "string"},
+    { "name": "type", "note": "Type", "type": "string"},
+    { "name": "interval", "note": "Interval", "type": "number"},
+    { "name": "statusCode", "note": "StatusCode", "type": "number"},
+    { "name": "headers", "note": "Headers", "type": "string"},
+    { "name": "body", "note": "Body", "type": "string"}
+  ],
+  "chdefault": {
+    "chan": "http_X",
+    "url": "http://localhost:8081",
+    "type": "get",
+    "interval": 10,
+    "statusCode": 200,
+    "headers": "",
+    "body": ""
+  }
 }
