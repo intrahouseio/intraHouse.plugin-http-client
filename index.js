@@ -36,21 +36,21 @@ function prepareValue(value) {
 
 function prepareData(data) {
   const parent = []
-  const values = {}
+  const children = {}
 
   data
     .forEach(i => {
       if (i.parentid === undefined) {
         parent.push(i);
       } else {
-        if (values[i.parentid] === undefined) {
-          values[i.parentid] = [];
+        if (children[i.parentid] === undefined) {
+          children[i.parentid] = [];
         }
-        values[i.parentid].push(prepareValue(i));
+        children[i.parentid].push(prepareValue(i));
       }
     });
 
-  return parent.map(i => ({ ...i, values: values[i.id] }));
+  return parent.map(i => ({ ...i, values: children[i.id] }));
 }
 
 function req(url, statusCode) {
