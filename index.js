@@ -5,14 +5,59 @@ const Plugin = require('./lib/plugin');
 const plugin = new Plugin();
 
 const channels = [
-  { url: 'https://frm.intrahouse.ru/', interval: 2, values: [{ dn: 'lamp1', parse: 'data.a' }, { dn: 'lamp2', parse: 'data.b.b' }], statusCode: 200, json: true }
+  {
+    id: '1',
+    url: 'https://frm.intrahouse.ru/',
+    type: 'get',
+    interval: 2,
+    statusCode: 200,
+  },
+  { id: '2', parentid: '1', dn: 'lamp1', type: 'json', json: 'data.a', number: true },
+  { id: '3', parentid: '1', dn: 'lamp2', type: 'text', regexp: 'Всего.сообщений\: <strong>(.*?)<\/strong>', flag: 'gm', rescount: 1, number: true  },
 ];
+
+function prepareValue(value) {
+  switch (value.type) {
+    case 'json':
+      return ({
+        ...value,
+        parse: new Function('data', `return ${value.json}`),
+      });
+    case 'text':
+      return ({
+        ...value,
+        parse: new RegExp(value.regexp, value.flag),
+      });
+    default:
+      return value;
+  }
+  return value;
+}
+
+function prepareData(data) {
+  const parent = []
+  const values = {}
+
+  data
+    .forEach(i => {
+      if (i.parentid === undefined) {
+        parent.push(i);
+      } else {
+        if (values[i.parentid] === undefined) {
+          values[i.parentid] = [];
+        }
+        values[i.parentid].push(prepareValue(i));
+      }
+    });
+
+  return parent.map(i => ({ ...i, values: values[i.id] }));
+}
 
 function req(url, statusCode) {
   return new Promise((resolve, reject) => {
     request(url, function (error, response, body) {
       if (error === null && (statusCode && response.statusCode === statusCode)) {
-        resolve('{ "a": 1, "b": 2 }');
+        resolve(body);
       } else {
         reject(error || Error(`Response status code no match: ${response.statusCode}`));
       }
@@ -20,35 +65,43 @@ function req(url, statusCode) {
   });
 }
 
-function parserJSON(text, values) {
-  const data = JSON.parse(text);
+function parser(text, values) {
   return values
-    .map(item => ({ dn: item.dn, res: item.parse(data) }));
+    .map(value => value.type === 'json' ? parserJSON(text, value) : parserREGEXP(text, value));
 }
 
-function parserREGEXP(text) {
-  return text;
+function parserJSON(text, item) {
+  try {
+    const data = JSON.parse(text);
+    return { dn: item.dn, value: item.number ? Number(item.parse(data)) : item.parse(data) };
+  } catch (e) {
+    return { dn: item.dn, error: e.message };
+  }
 }
 
-function task(item) {
+function parserREGEXP(text, item) {
+  try {
+    const regex = item.parse;
+    const values = regex.exec(text);
+    regex.exec('');
+    return { dn: item.dn, value: item.number ? Number(values[item.rescount]) : values[item.rescount] };
+  } catch (e) {
+    return { dn: item.dn, error: e.message };
+  }
+}
+
+function task() {
   req(this.url, this.statusCode)
-    .then(res => this.json ? parserJSON(res, this.values) : parserREGEXP(res, this.values))
+    .then(res => parser(res, this.values))
     .then(values => console.log(values))
     .catch(e => console.log(e.message));
 }
 
 function worker(item) {
-  const values = item.json ?
-    item.values
-      .map(i => ({
-        dn: i.dn,
-        parse: new Function('data', `try { return { value: ${i.parse}, status: 1 } } catch (e) { return { error: e.message, status: 0 } }`)
-      }))
-    :
-    item.values;
-  setInterval(task.bind({ ...item, values }) ,item.interval * 1000)
+  setInterval(task.bind(item), item.interval * 1000)
 }
 
 plugin.on('start', () => {
-  channels.forEach(worker);
+  prepareData(channels)
+    .forEach(worker);
 });
