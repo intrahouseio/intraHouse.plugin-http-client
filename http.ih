@@ -1,8 +1,8 @@
 {
-    "id":"p2p",
-    "description":"P2P plugin",
+    "id":"http",
+    "description":"HTTP plugin",
     "activation": false,
     "resources": false,
     "cross": true,
-    "version":"1.0.1"
+    "version":"0.0.1"
 }

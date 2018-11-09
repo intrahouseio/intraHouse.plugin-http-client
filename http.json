@@ -8,20 +8,52 @@
   "genrules": {},
   "commands": [],
   "chpattern": [
-    { "name": "url", "note": "Url", "type": "string"},
-    { "name": "type", "note": "Type", "type": "string"},
-    { "name": "interval", "note": "Interval", "type": "number"},
-    { "name": "statusCode", "note": "StatusCode", "type": "number"},
-    { "name": "headers", "note": "Headers", "type": "string"},
-    { "name": "body", "note": "Body", "type": "string"}
+    { "name": "id", "note": "id", "type": "string"},
+    { "name": "parentid", "note": "parentid", "type": "string"},
+    { "name": "url", "note": "Url", "type": "string", "visible": "data.parentid === false" },
+    { "name": "type", "note": "Type", "type": "droplist", "visible": "data.parentid === false",
+      "data": [
+        { "id": "get", "name": "GET" },
+        { "id": "post", "name": "POST" },
+        { "id": "put", "name": "PUT" },
+        { "id": "delete", "name": "DELETE" },
+        { "id": "patch", "name": "PATCH" },
+        { "id": "head", "name": "HEAD" },
+        { "id": "connect", "name": "CONNECT" },
+        { "id": "options", "name": "OPTIONS" },
+        { "id": "trace", "name": "TRACE" }
+      ]
+    },
+    { "name": "interval", "note": "Interval", "type": "number", "visible": "data.parentid === false" },
+    { "name": "statusCode", "note": "StatusCode", "type": "number", "visible": "data.parentid === false" },
+    { "name": "headers", "note": "Headers", "type": "TEXTAREA", "visible": "data.parentid === false" },
+    { "name": "body", "note": "Body", "type": "TEXTAREA", "visible": "data.parentid === false" },
+    { "name": "parseType", "note": "parseType", "type": "droplist", "visible": "data.parentid",
+      "data": [
+        { "id": "json", "name": "JSON" },
+        { "id": "text", "name": "TEXT" }
+      ]
+    },
+    { "name": "json", "note": "Json", "type": "TEXTAREA", "visible": "data.parentid" },
+    { "name": "regexp", "note": "Regexp", "type": "TEXTAREA", "visible": "data.parentid" },
+    { "name": "flag", "note": "Flag", "type": "string", "visible": "data.parentid" },
+    { "name": "rescount", "note": "Rescount", "type": "number", "visible": "data.parentid" },
+    { "name": "number", "note": "Number", "type": "cb", "visible": "data.parentid" }
   ],
   "chdefault": {
+    "parentid": false,
     "chan": "http_X",
     "url": "http://localhost:8081",
     "type": "get",
     "interval": 10,
     "statusCode": 200,
     "headers": "",
-    "body": ""
+    "body": "",
+    "parseType": "json",
+    "json": "data.value",
+    "regexp": "<div\b[^>]*>(.*?)</div>",
+    "flag": "gm",
+    "rescount": 1,
+    "number": true
   }
 }
