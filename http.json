@@ -3,6 +3,7 @@
   "description": "HTTP plugin",
   "gendevices": 0,
   "smart": 1,
+  "restartOnChannelsChange":1,
   "single": 0,
   "module": "index.js",
   "params": [],
