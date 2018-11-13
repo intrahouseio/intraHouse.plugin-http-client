@@ -83,7 +83,7 @@ function parserJSON(text, item) {
     const data = JSON.parse(text);
     const value = item.number ? Number(item.parse(data)) : item.parse(data);
     if (item.number && isNaN(value)) {
-      return { dn: item.dn, err: Error('Value is NaN!') };
+      return { dn: item.dn, err: 'Value is NaN!' };
     } else {
       return { dn: item.dn, value };
     }
@@ -97,7 +97,7 @@ function parserREGEXP(text, item) {
     if (item.parse === null) {
       const value = item.number ? Number(text) : text;
       if (item.number && isNaN(value)) {
-        return { dn: item.dn, err: Error('Value is NaN!') };
+        return { dn: item.dn, err: 'Value is NaN!' };
       } else {
         return { dn: item.dn, value };
       }
@@ -107,7 +107,7 @@ function parserREGEXP(text, item) {
       const value = item.number ? Number(values[item.rescount]) : values[item.rescount];
       regex.exec('');
       if (item.number && isNaN(value)) {
-        return { dn: item.dn, err: Error('Value is NaN!') };
+        return { dn: item.dn, err: 'Value is NaN!' };
       } else {
         return { dn: item.dn, value };
       }
