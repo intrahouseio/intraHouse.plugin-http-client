@@ -95,7 +95,7 @@ function parserJSON(text, item) {
 function parserREGEXP(text, item) {
   try {
     if (item.parse === null) {
-      const value = value: item.number ? Number(text) : text;
+      const value = item.number ? Number(text) : text;
       if (item.number && value === null) {
         return { dn: item.dn, err: Error('Value is null!') };
       } else {
