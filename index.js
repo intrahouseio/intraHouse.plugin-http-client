@@ -81,7 +81,12 @@ function parser(text, values) {
 function parserJSON(text, item) {
   try {
     const data = JSON.parse(text);
-    return { dn: item.dn, value: item.number ? Number(item.parse(data)) : item.parse(data) };
+    const value = item.number ? Number(item.parse(data)) : item.parse(data);
+    if (item.number && value === null) {
+      return { dn: item.dn, err: Error('Value is null!') };
+    } else {
+      return { dn: item.dn, value };
+    }
   } catch (e) {
     return { dn: item.dn, err: e.message };
   }
