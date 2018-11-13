@@ -2,58 +2,84 @@
   "id": "http",
   "description": "HTTP plugin",
   "gendevices": 0,
+  "smart": 1,
   "single": 0,
   "module": "index.js",
   "params": [],
   "genrules": {},
   "commands": [],
-  "chpattern": [
-    { "name": "id", "note": "id", "type": "string"},
-    { "name": "parentid", "note": "parentid", "type": "string"},
-    { "name": "url", "note": "Url", "type": "string", "visible": "data.parentid === false" },
-    { "name": "type", "note": "Type", "type": "droplist", "visible": "data.parentid === false",
-      "data": [
-        { "id": "get", "name": "GET" },
-        { "id": "post", "name": "POST" },
-        { "id": "put", "name": "PUT" },
-        { "id": "delete", "name": "DELETE" },
-        { "id": "patch", "name": "PATCH" },
-        { "id": "head", "name": "HEAD" },
-        { "id": "connect", "name": "CONNECT" },
-        { "id": "options", "name": "OPTIONS" },
-        { "id": "trace", "name": "TRACE" }
-      ]
+  "sch": {
+    "parent": true,
+    "scheme": {
+      "tools": { "filter": false, "fixed": false, "name": "", "order": -1, "type": "parent", "width": 30 },
+      "url": { "filter": true, "fixed": false, "name": "$Url", "order": 1, "type": "STRING", "width": 250 },
+      "type": { "filter": true, "fixed": false, "name": "$Type", "order": 2, "type": "STRING", "width": 200 },
+      "interval": { "filter": false, "fixed": false, "name": "$Interval", "order": 3, "type": "STRING", "width": 150 },
+      "dn": { "filter": true, "fixed": false, "name": "$Device", "order": 4, "type": "STRING", "width": 200 },
+      "parseType": { "filter": false, "fixed": false, "name": "$Parser", "order": 5, "type": "STRING", "width": 150 }
     },
-    { "name": "interval", "note": "Interval", "type": "number", "visible": "data.parentid === false" },
-    { "name": "statusCode", "note": "StatusCode", "type": "number", "visible": "data.parentid === false" },
-    { "name": "headers", "note": "Headers", "type": "TEXTAREA", "visible": "data.parentid === false" },
-    { "name": "body", "note": "Body", "type": "TEXTAREA", "visible": "data.parentid === false" },
-    { "name": "parseType", "note": "parseType", "type": "droplist", "visible": "data.parentid",
-      "data": [
-        { "id": "json", "name": "JSON" },
-        { "id": "text", "name": "TEXT" }
-      ]
+    "record": {
+      "req": {
+        "name": "$Request",
+        "order": 0,
+        "toolbar": false,
+        "properties": {
+          "url": { "name": "$Url", "order": 0, "type": "STRING" },
+          "type": { "name": "$Type", "order": 1,  "type": "droplist",
+            "data": [
+              { "id": "get", "name": "GET" },
+              { "id": "post", "name": "POST" },
+              { "id": "put", "name": "PUT" },
+              { "id": "delete", "name": "DELETE" },
+              { "id": "patch", "name": "PATCH" },
+              { "id": "head", "name": "HEAD" },
+              { "id": "connect", "name": "CONNECT" },
+              { "id": "options", "name": "OPTIONS" },
+              { "id": "trace", "name": "TRACE" }
+            ]
+          },
+          "interval": { "name": "$Interval", "order": 3, "type": "NUMBER" },
+          "statusCode": { "name": "$StatusCode", "order": 4, "type": "NUMBER" },
+          "headers": { "name": "$Headers", "order": 5, "type": "TEXTAREA" },
+          "body": { "name": "$Body", "order": 6, "type": "TEXTAREA", "visible": "!(data.type === 'get' || data.type === 'head')" }
+        }
+      },
+      "channel": {
+        "name": "$Channel",
+        "order": 1,
+        "toolbar": false,
+        "properties": {
+          "dn": { "name": "$Device", "order": 1, "type": "autocomplete", "data": "devicesdroplist" },
+          "parseType": { "name": "$Parser", "order": 2, "type": "droplist",
+            "data": [
+              { "id": "json", "name": "JSON" },
+              { "id": "text", "name": "TEXT" }
+            ]
+          },
+          "json": { "name": "$Json", "order": 3, "type": "TEXTAREA", "visible": "data.parentid && data.parseType === 'json'" },
+          "regexp": { "name": "$Regexp", "order": 4, "type": "TEXTAREA", "visible": "data.parentid && data.parseType === 'text'" },
+          "flag": { "name": "$Flag", "order": 5, "type": "STRING", "visible": "data.parentid && data.parseType === 'text' && data.regexp !== ''" },
+          "rescount": { "name": "$Rescount", "order": 6, "type": "NUMBER", "visible": "data.parentid && data.parseType === 'text' && data.regexp !== ''" },
+          "number": { "name": "$Number", "order": 7, "type": "cb" }
+        }
+      }
     },
-    { "name": "json", "note": "Json", "type": "TEXTAREA", "visible": "data.parentid" },
-    { "name": "regexp", "note": "Regexp", "type": "TEXTAREA", "visible": "data.parentid" },
-    { "name": "flag", "note": "Flag", "type": "string", "visible": "data.parentid" },
-    { "name": "rescount", "note": "Rescount", "type": "number", "visible": "data.parentid" },
-    { "name": "number", "note": "Number", "type": "cb", "visible": "data.parentid" }
-  ],
-  "chdefault": {
-    "parentid": false,
-    "chan": "http_X",
-    "url": "http://localhost:8081",
-    "type": "get",
-    "interval": 10,
-    "statusCode": 200,
-    "headers": "",
-    "body": "",
-    "parseType": "json",
-    "json": "data.value",
-    "regexp": "<div\b[^>]*>(.*?)</div>",
-    "flag": "gm",
-    "rescount": 1,
-    "number": true
+    "default": {
+      "url": "http://localhost:8081",
+      "type": "get",
+      "interval": 10,
+      "statusCode": 200,
+      "headers": "Accept-Language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7\r\nUser-Agent: intraHouse (http-plugin)",
+      "body": "username=admin&password=1234"
+    },
+    "defaultchild": {
+      "dn": "",
+      "parseType": "json",
+      "json": "data.value",
+      "regexp": "<div\\b[^>]*>(.*?)</div>",
+      "flag": "gm",
+      "rescount": 1,
+      "number": true
+    }
   }
 }

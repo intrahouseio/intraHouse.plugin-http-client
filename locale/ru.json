@@ -1,3 +1,17 @@
 {
-  "Token": "Токен"
+  "Url": "Url",
+  "Type": "Метод запроса",
+  "Interval": "Интервал",
+  "StatusCode": "Код ответа",
+  "Headers": "Headers",
+  "Body": "Body",
+  "Device": "Устройство",
+  "Parser": "Тип обработки",
+  "Request": "Запрос",
+  "Channel": "Канал",
+  "Json": "Извлечение данных JSON",
+  "Regexp": "Регулярное выражение (RegExp.exec)",
+  "Flag": "Флаг",
+  "Rescount": "Элемент массива (result)",
+  "Number": "Преобразовать в число"
 }

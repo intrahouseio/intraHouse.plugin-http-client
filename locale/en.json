@@ -1,3 +1,17 @@
 {
-  "Token": "Token"
+  "Url": "Url",
+  "Type": "Method",
+  "Interval": "Interval",
+  "StatusCode": "Status Code",
+  "Headers": "Headers",
+  "Body": "Body",
+  "Device": "Device",
+  "Parser": "Parser",
+  "Request": "Request",
+  "Channel": "Channel",
+  "Json": "Extract JSON data",
+  "Regexp": "Regular Expression (RegExp.exec)",
+  "Flag": "Flag",
+  "Rescount": "Results index",
+  "Number": "Convert to number"
 }
