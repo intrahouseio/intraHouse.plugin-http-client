@@ -95,12 +95,22 @@ function parserJSON(text, item) {
 function parserREGEXP(text, item) {
   try {
     if (item.parse === null) {
-      return { dn: item.dn, value: item.number ? Number(text) : text };
+      const value = value: item.number ? Number(text) : text;
+      if (item.number && value === null) {
+        return { dn: item.dn, err: Error('Value is null!') };
+      } else {
+        return { dn: item.dn, value };
+      }
     } else {
       const regex = item.parse;
       const values = regex.exec(text);
+      const value = item.number ? Number(values[item.rescount]) : values[item.rescount];
       regex.exec('');
-      return { dn: item.dn, value: item.number ? Number(values[item.rescount]) : values[item.rescount] };
+      if (item.number && value === null) {
+        return { dn: item.dn, err: Error('Value is null!') };
+      } else {
+        return { dn: item.dn, value };
+      }
     }
   } catch (e) {
     return { dn: item.dn, err: e.message };
