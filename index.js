@@ -82,8 +82,8 @@ function parserJSON(text, item) {
   try {
     const data = JSON.parse(text);
     const value = item.number ? Number(item.parse(data)) : item.parse(data);
-    if (item.number && value === null) {
-      return { dn: item.dn, err: Error('Value is null!') };
+    if (item.number && isNaN(value)) {
+      return { dn: item.dn, err: Error('Value is NaN!') };
     } else {
       return { dn: item.dn, value };
     }
@@ -96,8 +96,8 @@ function parserREGEXP(text, item) {
   try {
     if (item.parse === null) {
       const value = item.number ? Number(text) : text;
-      if (item.number && value === null) {
-        return { dn: item.dn, err: Error('Value is null!') };
+      if (item.number && isNaN(value)) {
+        return { dn: item.dn, err: Error('Value is NaN!') };
       } else {
         return { dn: item.dn, value };
       }
@@ -106,8 +106,8 @@ function parserREGEXP(text, item) {
       const values = regex.exec(text);
       const value = item.number ? Number(values[item.rescount]) : values[item.rescount];
       regex.exec('');
-      if (item.number && value === null) {
-        return { dn: item.dn, err: Error('Value is null!') };
+      if (item.number && isNaN(value)) {
+        return { dn: item.dn, err: Error('Value is NaN!') };
       } else {
         return { dn: item.dn, value };
       }
