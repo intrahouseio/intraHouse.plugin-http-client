@@ -68,7 +68,7 @@
     "default": {
       "url": "http://localhost:8081",
       "type": "get",
-      "interval": 10,
+      "interval": 60,
       "statusCode": 200,
       "headers": "Accept-Language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7\r\nUser-Agent: intraHouse (http-plugin)",
       "body": "username=admin&password=1234"

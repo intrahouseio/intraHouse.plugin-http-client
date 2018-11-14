@@ -1,7 +1,7 @@
 {
   "Url": "Url",
   "Type": "Метод запроса",
-  "Interval": "Интервал",
+  "Interval": "Интервал опроса (сек)",
   "StatusCode": "Код ответа",
   "Headers": "Headers",
   "Body": "Body",

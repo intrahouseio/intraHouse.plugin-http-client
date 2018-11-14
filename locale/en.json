@@ -1,8 +1,8 @@
 {
   "Url": "Url",
   "Type": "Method",
-  "Interval": "Interval",
-  "StatusCode": "Status Code",
+  "Interval": "Polling interval (sec)",
+  "StatusCode": "Response status code",
   "Headers": "Headers",
   "Body": "Body",
   "Device": "Device",
