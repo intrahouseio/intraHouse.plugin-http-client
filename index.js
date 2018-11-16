@@ -4,13 +4,21 @@ const Plugin = require('./lib/plugin');
 
 const plugin = new Plugin();
 
+function createFunction(value) {
+  try {
+    return new Function('data', `return ${value}`);
+  } catch (e) {
+    return e.message;
+  }
+}
+
 
 function prepareChildren(value) {
   switch (value.parseType) {
     case 'json':
       return ({
         ...value,
-        parse: new Function('data', `return ${value.json}`),
+        parse: createFunction(value.json),
       });
     case 'text':
       return ({
@@ -80,6 +88,9 @@ function parser(text, values) {
 
 function parserJSON(text, item) {
   try {
+    if (typeof item.parse !== 'function') {
+      return { dn: item.dn, err: item.parse };
+    }
     const data = JSON.parse(text);
     const value = item.number ? Number(item.parse(data)) : item.parse(data);
     if (item.number && isNaN(value)) {
