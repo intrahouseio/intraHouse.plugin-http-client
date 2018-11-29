@@ -11,7 +11,28 @@ const system = {
 
 }
 
-const config = [];
+const config = [
+  {
+    id: '1',
+    url: "http://localhost:2222",
+    type: "post",
+    interval: 60,
+    statusCode: 200,
+    headers: "Accept-Language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7\r\nUser-Agent: intraHouse (http-plugin)",
+    headerCL: false,
+    body: "username=admin&password=1234!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
+  },
+  {
+    parentid: '1',
+    dn: "",
+    parseType: "json",
+    json: "data.value",
+    regexp: "<div\\b[^>]*>(.*?)</div>",
+    flag: "gm",
+    rescount: 1,
+    number: true
+  }
+];
 
 const ps = child.fork(modulepath, [unitid]);
 
@@ -25,7 +46,7 @@ ps.on('message', data => {
   }
 
   if (data.type === 'get' && data.tablename === `config/${unitid}`) {
-    ps.send({ type: 'get', config: {} });
+    ps.send({ type: 'get', config });
   }
 
   if (data.type === 'data') {

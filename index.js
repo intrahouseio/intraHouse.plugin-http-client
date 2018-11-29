@@ -69,8 +69,11 @@ function prepareData(data) {
   return parent.map(i => ({ ...i, values: children[i.id] }));
 }
 
-function req({ url, type, headers, body, statusCode }) {
+function req({ url, type, headers, body, statusCode, headerCL }) {
   return new Promise((resolve, reject) => {
+    if ( headerCL && !(type === 'get' || type === 'head')) {
+      headers['Content-Length'] = body.length;
+    }
     request({ uri: url, method: type, headers, body }, function (error, response, body) {
       if (error === null && (statusCode ? response.statusCode === statusCode : true)) {
         resolve(body);

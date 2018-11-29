@@ -42,7 +42,16 @@
           "interval": { "name": "$Interval", "order": 3, "type": "NUMBER" },
           "statusCode": { "name": "$StatusCode", "order": 4, "type": "NUMBER" },
           "headers": { "name": "$Headers", "order": 5, "type": "TEXTAREA" },
-          "body": { "name": "$Body", "order": 6, "type": "TEXTAREA", "visible": "!(data.type === 'get' || data.type === 'head')" }
+          "headerCL": { "name": "$HeaderCL", "order": 7, "type": "cb", "visible": "!(data.type === 'get' || data.type === 'head')" },
+          "body": { "name": "$Body", "order": 8, "type": "TEXTAREA", "visible": "!(data.type === 'get' || data.type === 'head')" }
+        }
+      },
+      "extended": {
+        "name": "$Extended",
+        "order": 1,
+        "toolbar": false,
+        "properties": {
+          "headerCL": { "name": "$HeaderCL", "order": 7, "type": "cb", "visible": "!(data.type === 'get' || data.type === 'head')" }
         }
       },
       "channel": {
@@ -71,6 +80,7 @@
       "interval": 60,
       "statusCode": 200,
       "headers": "Accept-Language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7\r\nUser-Agent: intraHouse (http-plugin)",
+      "headerCL": false,
       "body": "username=admin&password=1234"
     },
     "defaultchild": {
