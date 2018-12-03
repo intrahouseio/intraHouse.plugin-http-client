@@ -71,6 +71,49 @@
           "rescount": { "name": "$Rescount", "order": 6, "type": "NUMBER", "visible": "data.parentid && data.parseType === 'text' && data.regexp !== ''" },
           "number": { "name": "$Number", "order": 7, "type": "cb" }
         }
+      },
+      "actions": {
+        "name": "$Actions",
+        "order": 2,
+        "toolbar": false,
+        "properties": {
+          "actions": { "name": "$Actions", "order": 8, "type": "multi",
+            "data": {
+              "scheme": {
+                  "act": { "name": "$Action", "type": "droplist", "order": 0, "data":[{"id":"on", "name":"on"}, {"id":"off", "name":"off"},{"id":"toggle", "name":"toggle"}] },
+                  "url": { "name": "$Url", "order": 0, "type": "STRING" },
+                  "type": { "name": "$Type", "order": 1,  "type": "droplist",
+                    "data": [
+                      { "id": "get", "name": "GET" },
+                      { "id": "post", "name": "POST" },
+                      { "id": "put", "name": "PUT" },
+                      { "id": "delete", "name": "DELETE" },
+                      { "id": "patch", "name": "PATCH" },
+                      { "id": "head", "name": "HEAD" },
+                      { "id": "connect", "name": "CONNECT" },
+                      { "id": "options", "name": "OPTIONS" },
+                      { "id": "trace", "name": "TRACE" }
+                    ]
+                  },
+                  "statusCode": { "name": "$StatusCode", "order": 4, "type": "NUMBER" },
+                  "headers": { "name": "$Headers", "order": 5, "type": "TEXTAREA" },
+                  "body": { "name": "$Body", "order": 7, "type": "TEXTAREA", "visible": "!(data.type === 'get' || data.type === 'head')" },
+                  "headerCL": { "name": "$HeaderCL", "order": 8, "type": "cb", "visible": "!(data.type === 'get' || data.type === 'head')" },
+                  "updatestate": { "name": "$Updatestate", "order": 9, "type": "cb" }
+                },
+                "default": {
+                  "act": "on",
+                  "url": "http://localhost:8081",
+                  "type": "get",
+                  "statusCode": 200,
+                  "headers": "Accept-Language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7\r\nUser-Agent: intraHouse (http-plugin)",
+                  "body": "username=admin&password=1234",
+                  "headerCL": false,
+                  "updatestate": false
+                }
+              }
+           }
+        }
       }
     },
     "default": {
@@ -89,7 +132,19 @@
       "regexp": "<div\\b[^>]*>(.*?)</div>",
       "flag": "gm",
       "rescount": 1,
-      "number": true
+      "number": true,
+      "actions": [
+        {
+          "act": "on",
+          "url": "http://localhost:8081",
+          "type": "get",
+          "statusCode": 200,
+          "headers": "Accept-Language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7\r\nUser-Agent: intraHouse (http-plugin)",
+          "body": "username=admin&password=1234",
+          "headerCL": false,
+          "updatestate": false
+        }
+      ]
     }
   }
 }

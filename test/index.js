@@ -16,7 +16,7 @@ const config = [
     id: '1',
     url: "http://localhost:2222",
     type: "post",
-    interval: 60,
+    interval: 10,
     statusCode: 200,
     headers: "Accept-Language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7\r\nUser-Agent: intraHouse (http-plugin)",
     headerCL: false,
@@ -24,13 +24,25 @@ const config = [
   },
   {
     parentid: '1',
-    dn: "",
+    dn: "LAMP1",
     parseType: "json",
     json: "data.value",
     regexp: "<div\\b[^>]*>(.*?)</div>",
     flag: "gm",
     rescount: 1,
-    number: true
+    number: true,
+    actions: [
+      {
+        act: "on",
+        url: "http://localhost:2222",
+        type: "post",
+        statusCode: 200,
+        headers: "Accept-Language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7\r\nUser-Agent: intraHouse (http-plugin)",
+        body: "1",
+        headerCL: false,
+        updatestate: true,
+      }
+    ],
   }
 ];
 
@@ -73,3 +85,7 @@ ps.on('close', code => {
 });
 
 ps.send({type: 'debug', mode: true });
+
+setTimeout(() => {
+ps.send({ type: 'act', data: [ { dn: 'LAMP1', prop: 'on' } ] });
+}, 1000)

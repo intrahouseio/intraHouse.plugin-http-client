@@ -1,8 +1,9 @@
 const request = require('request');
 const Plugin = require('./lib/plugin');
 
-
 const plugin = new Plugin();
+
+const STORE = {};
 
 function createFunction(value) {
   try {
@@ -11,7 +12,6 @@ function createFunction(value) {
     return e.message;
   }
 }
-
 
 function prepareChildren(value) {
   switch (value.parseType) {
@@ -50,7 +50,7 @@ function prepareParent(value) {
   return { ...value, headers, body };
 }
 
-function prepareData(data) {
+function prepareTasks(data) {
   const parent = []
   const children = {}
 
@@ -67,6 +67,21 @@ function prepareData(data) {
     });
 
   return parent.map(i => ({ ...i, values: children[i.id] }));
+}
+
+function prepareActions(data) {
+  const actions = {};
+  data
+    .forEach((r, key) => {
+      r.values.forEach(c => {
+        actions[c.dn] = {};
+          c.actions.forEach(a => {
+            a.task = key;
+            actions[c.dn][a.act] = prepareParent(a);
+          });
+      });
+    });
+  return actions;
 }
 
 function req({ url, type, headers, body, statusCode, headerCL }) {
@@ -144,7 +159,24 @@ function worker(item) {
   _task();
 }
 
+plugin.on('device_action', (device) => {
+  if (STORE.actions[device.dn] && STORE.actions[device.dn][device.prop]) {
+    const action = STORE.actions[device.dn][device.prop];
+
+    req(action)
+      .then(res => {
+        if (action.updatestate) {
+          task.bind(STORE.tasks[action.task]).call();
+        } else {
+          plugin.setDeviceValue([{ dn: device.dn, value: device.prop === 'on' ? 1 : 0 }]);
+        }
+      })
+      .catch(e => plugin.setDeviceValue([{ dn: device.dn, err: e.message }]));
+  }
+});
+
 plugin.on('start', () => {
-  prepareData(plugin.channels)
-    .forEach(worker);
+  STORE.tasks = prepareTasks(plugin.channels);
+  STORE.actions = prepareActions(STORE.tasks);
+  STORE.tasks.forEach(worker);
 });
