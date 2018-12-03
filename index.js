@@ -79,11 +79,13 @@ function prepareActions(data) {
   data
     .forEach((r, key) => {
       r.values.forEach(c => {
-        actions[c.dn] = {};
-          c.actions.forEach(a => {
-            a.task = key;
-            actions[c.dn][a.act] = prepareParent(a);
-          });
+        if (c.actions) {
+          actions[c.dn] = {};
+            c.actions.forEach(a => {
+              a.task = key;
+              actions[c.dn][a.act] = prepareParent(a);
+            });
+        }
       });
     });
   return actions;
