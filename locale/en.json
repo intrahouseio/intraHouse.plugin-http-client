@@ -13,10 +13,14 @@
   "Channel": "Channel",
   "Json": "Extract JSON data",
   "Regexp": "Regular Expression (RegExp.exec)",
+  "Regexptest": "Regular Expression (RegExp.test)",
   "Flag": "Flag",
   "Rescount": "Results index",
   "Number": "Convert to number",
   "Actions":"Actions",
   "Action":"Action",
+  "Action":"Action",
+  "ValueTrue":"Set value if true",
+  "ValueFalse":"Set value if false",
   "Updatestate": "Update status after command execution"
 }

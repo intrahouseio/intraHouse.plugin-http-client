@@ -14,8 +14,8 @@ const system = {
 const config = [
   {
     id: '1',
-    url: "http://localhost:2222",
-    type: "post",
+    url: "http://localhost:2222/test",
+    type: "get",
     interval: 10,
     statusCode: 200,
     headers: "Accept-Language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7\r\nUser-Agent: intraHouse (http-plugin)",
@@ -25,9 +25,12 @@ const config = [
   {
     parentid: '1',
     dn: "LAMP1",
-    parseType: "json",
+    parseType: "search",
     json: "data.value",
     regexp: "<div\\b[^>]*>(.*?)</div>",
+    regexptest: "[a-z0-9]",
+    valueTrue: '1',
+    valueFalse: 'null',
     flag: "gm",
     rescount: 1,
     number: true,

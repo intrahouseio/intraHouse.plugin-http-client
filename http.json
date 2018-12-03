@@ -62,14 +62,18 @@
           "parseType": { "name": "$Parser", "order": 2, "type": "droplist",
             "data": [
               { "id": "json", "name": "JSON" },
-              { "id": "text", "name": "TEXT" }
+              { "id": "text", "name": "TEXT GET" },
+              { "id": "search", "name": "TEXT SEARCH" }
             ]
           },
           "json": { "name": "$Json", "order": 3, "type": "TEXTAREA", "visible": "data.parentid && data.parseType === 'json'" },
           "regexp": { "name": "$Regexp", "order": 4, "type": "TEXTAREA", "visible": "data.parentid && data.parseType === 'text'" },
-          "flag": { "name": "$Flag", "order": 5, "type": "STRING", "visible": "data.parentid && data.parseType === 'text' && data.regexp !== ''" },
-          "rescount": { "name": "$Rescount", "order": 6, "type": "NUMBER", "visible": "data.parentid && data.parseType === 'text' && data.regexp !== ''" },
-          "number": { "name": "$Number", "order": 7, "type": "cb" }
+          "regexptest": { "name": "$Regexptest", "order": 5, "type": "TEXTAREA", "visible": "data.parentid && data.parseType === 'search'" },
+          "flag": { "name": "$Flag", "order": 6, "type": "STRING", "visible": "data.parentid && (data.parseType === 'text' || data.parseType === 'search') && data.regexp !== ''" },
+          "rescount": { "name": "$Rescount", "order": 7, "type": "NUMBER", "visible": "data.parentid && data.parseType === 'text' && data.regexp !== ''" },
+          "valueTrue": { "name": "$ValueTrue", "order": 8, "type": "STRING", "visible": "data.parentid && data.parseType === 'search'" },
+          "valueFalse": { "name": "$ValueFalse", "order": 9, "type": "STRING", "visible": "data.parentid && data.parseType === 'search'" },
+          "number": { "name": "$Number", "order": 10, "type": "cb" }
         }
       },
       "actions": {
@@ -130,6 +134,9 @@
       "parseType": "json",
       "json": "data.value",
       "regexp": "<div\\b[^>]*>(.*?)</div>",
+      "regexptest": "[a-z0-9]",
+      "valueTrue": "1",
+      "valueFalse": "null",
       "flag": "gm",
       "rescount": 1,
       "number": true,

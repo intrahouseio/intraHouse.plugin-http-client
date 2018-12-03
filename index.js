@@ -25,6 +25,11 @@ function prepareChildren(value) {
         ...value,
         parse: value.regexp !== '' ? new RegExp(value.regexp, value.flag) : null,
       });
+    case 'search':
+      return ({
+        ...value,
+        parse: value.regexp !== '' ? new RegExp(value.regexptest, value.flag) : null,
+      });
     default:
       return value;
   }
@@ -101,7 +106,19 @@ function req({ url, type, headers, body, statusCode, headerCL }) {
 
 function parser(text, values) {
   return values
-    .map(value => value.parseType === 'json' ? parserJSON(text, value) : parserREGEXP(text, value));
+    .map(value => {
+      switch (value.parseType) {
+        case 'json':
+          return parserJSON(text, value);
+        case 'text':
+          return parserREGEXP(text, value);
+        case 'search':
+           return parserREGEXPTEST(text, value);
+        default:
+          return {};
+      }
+    })
+    .filter(i => i.dn !== null);
 }
 
 function parserJSON(text, item) {
@@ -146,10 +163,33 @@ function parserREGEXP(text, item) {
   }
 }
 
+function parserREGEXPTEST(text, item) {
+  try {
+      const regex = item.parse;
+      const test = regex.test(text);
+      regex.test('');
+      if (test) {
+        return { dn: item.dn, value: item.number ? Number(item.valueTrue) : item.valueTrue };
+      } else {
+        if (item.valueFalse !== 'null') {
+          return { dn: item.dn, value: item.number ? Number(item.valueFalse) : item.valueFalse };
+        } else {
+          return { dn: null };
+        }
+      }
+  } catch (e) {
+    return { dn: item.dn, err: e.message };
+  }
+}
+
 function task() {
   req(this)
     .then(res => parser(res, this.values))
-    .then(values => plugin.setDeviceValue(values))
+    .then(values => {
+      if (values.length) {
+        plugin.setDeviceValue(values);
+      }
+    })
     .catch(e => plugin.setDeviceValue(this.values.map(item => ({ dn: item.dn, err: e.message }))));
 }
 
