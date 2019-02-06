@@ -71,7 +71,7 @@ function prepareTasks(data) {
       }
     });
 
-  return parent.map(i => ({ ...i, values: children[i.id] }));
+  return parent.map(i => ({ ...i, values: children[i.id] || [] }));
 }
 
 function prepareActions(data) {
@@ -98,6 +98,7 @@ function req({ url, type, headers, body, statusCode, headerCL }) {
     }
     request({ uri: url, method: type, headers, body }, function (error, response, body) {
       if (error === null && (statusCode ? response.statusCode === statusCode : true)) {
+        plugin.debug(`${type.toUpperCase()} ${url}\n---- BODY START ----\n${body}---- BODY END ----\n\n`, 1);
         resolve(body);
       } else {
         reject(error || Error(`Response status code no match: ${response.statusCode}`));

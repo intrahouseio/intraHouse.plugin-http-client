@@ -23,7 +23,7 @@ const config = [
     body: "username=admin&password=1234!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!",
   },
   {
-    parentid: '1',
+    parentid: '2',
     dn: "LAMP1",
     parseType: "search",
     json: "data.value",
