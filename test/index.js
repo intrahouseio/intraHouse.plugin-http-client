@@ -4,7 +4,8 @@ const modulepath = './index.js';
 const unitid = 'http'
 
 const params = {
-
+  debug: 'on',
+  loglevel: 1,
 }
 
 const system = {
@@ -14,7 +15,7 @@ const system = {
 const config = [
   {
     id: '1',
-    url: "http://localhost:2222/test",
+    url: "https://frm.intrahouse.ru/",
     type: "get",
     interval: 10,
     statusCode: 200,

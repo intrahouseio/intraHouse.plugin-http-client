@@ -101,7 +101,9 @@ function req({ url, type, headers, body, statusCode, headerCL }) {
         plugin.debug(`${type.toUpperCase()} ${url}\n---- BODY START ----\n${body}---- BODY END ----\n\n`, 1);
         resolve(body);
       } else {
-        reject(error || Error(`Response status code no match: ${response.statusCode}`));
+        const error_text = error ? error.message : `Response status code no match, ${statusCode} != ${response.statusCode}`;
+        plugin.debug(`${type.toUpperCase()} ${url}  error: ${error_text}`, 1);
+        reject(error || Error(`Response status code no match, ${statusCode} != ${response.statusCode}`));
       }
     });
   });
