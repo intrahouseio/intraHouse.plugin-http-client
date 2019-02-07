@@ -5,7 +5,7 @@ const unitid = 'http'
 
 const params = {
   debug: 'on',
-  loglevel: 1,
+  loglevel: 0,
 }
 
 const system = {

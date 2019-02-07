@@ -26,7 +26,7 @@
         "toolbar": false,
         "properties": {
           "url": { "name": "$Url", "order": 0, "type": "STRING" },
-          "type": { "name": "$Type", "order": 1,  "type": "droplist",
+          "type": { "name": "$Type", "order": 1,  "type": "autocomplete",
             "data": [
               { "id": "get", "name": "GET" },
               { "id": "post", "name": "POST" },
@@ -42,12 +42,39 @@
           "interval": { "name": "$Interval", "order": 3, "type": "NUMBER" },
           "statusCode": { "name": "$StatusCode", "order": 4, "type": "NUMBER" },
           "headers": { "name": "$Headers", "order": 5, "type": "TEXTAREA" },
-          "body": { "name": "$Body", "order": 8, "type": "TEXTAREA", "visible": "!(data.type === 'get' || data.type === 'head')" }
+          "body": { "name": "$Body", "order": 8, "type": "TEXTAREA", "visible": "!(data.type === 'get' || data.type === 'head')" },
+          "reqAuth": { "name": "$reqAuthText", "order": 9, "type": "cb" }
+        }
+      },
+      "reqAuth": {
+        "name": "$RequestAuth",
+        "order": 1,
+        "toolbar": false,
+        "properties": {
+          "reqAuthUrl": { "name": "$Url", "order": 0, "type": "STRING", "visible": "data.reqAuth" },
+          "reqAuthType": { "name": "$Type", "order": 1,  "type": "autocomplete", "visible": "data.reqAuth",
+            "data": [
+              { "id": "get", "name": "GET" },
+              { "id": "post", "name": "POST" },
+              { "id": "put", "name": "PUT" },
+              { "id": "delete", "name": "DELETE" },
+              { "id": "patch", "name": "PATCH" },
+              { "id": "head", "name": "HEAD" },
+              { "id": "connect", "name": "CONNECT" },
+              { "id": "options", "name": "OPTIONS" },
+              { "id": "trace", "name": "TRACE" }
+            ]
+          },
+          "reqAuthStatusCode": { "name": "$StatusCode", "order": 4, "type": "NUMBER", "visible": "data.reqAuth" },
+          "reqAuthHeaders": { "name": "$Headers", "order": 5, "type": "TEXTAREA", "visible": "data.reqAuth" },
+          "reqAuthBody": { "name": "$Body", "order": 8, "type": "TEXTAREA", "visible": "data.reqAuth && !(data.reqAuthType === 'get' || data.reqAuthType === 'head')" },
+          "reqAuthInheritQuery": { "name": "$reqAuthQuery", "order": 9, "type": "cb", "visible": "data.reqAuth" },
+          "reqAuthEverytime": { "name": "$reqAuthEverytime", "order": 10, "type": "cb", "visible": "data.reqAuth" }
         }
       },
       "extended": {
         "name": "$Extended",
-        "order": 1,
+        "order": 2,
         "toolbar": false,
         "properties": {
           "headerCL": { "name": "$HeaderCL", "order": 7, "type": "cb", "visible": "!(data.type === 'get' || data.type === 'head')" }
@@ -55,11 +82,11 @@
       },
       "channel": {
         "name": "$Channel",
-        "order": 1,
+        "order": 2,
         "toolbar": false,
         "properties": {
           "dn": { "name": "$Device", "order": 1, "type": "autocomplete", "data": "devicesdroplist" },
-          "parseType": { "name": "$Parser", "order": 2, "type": "droplist",
+          "parseType": { "name": "$Parser", "order": 2, "type": "autocomplete",
             "data": [
               { "id": "json", "name": "JSON" },
               { "id": "text", "name": "TEXT GET" },
@@ -78,15 +105,15 @@
       },
       "actions": {
         "name": "$Actions",
-        "order": 2,
+        "order": 3,
         "toolbar": false,
         "properties": {
           "actions": { "name": "$Actions", "order": 8, "type": "multi",
             "data": {
               "scheme": {
-                  "act": { "name": "$Action", "type": "droplist", "order": 0, "data":[{"id":"on", "name":"on"}, {"id":"off", "name":"off"},{"id":"toggle", "name":"toggle"}] },
+                  "act": { "name": "$Action", "type": "autocomplete", "order": 0, "data":[{"id":"on", "name":"on"}, {"id":"off", "name":"off"},{"id":"toggle", "name":"toggle"}] },
                   "url": { "name": "$Url", "order": 0, "type": "STRING" },
-                  "type": { "name": "$Type", "order": 1,  "type": "droplist",
+                  "type": { "name": "$Type", "order": 1,  "type": "autocomplete",
                     "data": [
                       { "id": "get", "name": "GET" },
                       { "id": "post", "name": "POST" },
@@ -127,7 +154,15 @@
       "statusCode": 200,
       "headers": "Accept-Language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7\r\nUser-Agent: intraHouse (http-plugin)",
       "headerCL": false,
-      "body": "username=admin&password=1234"
+      "body": "username=admin&password=1234",
+      "reqAuth": false,
+      "reqAuthUrl": "http://localhost:8081/login",
+      "reqAuthType": "post",
+      "reqAuthHeaders": "Accept-Language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7\r\nUser-Agent: intraHouse (http-plugin)",
+      "reqAuthBody": "username=admin&password=1234",
+      "reqAuthInheritCookies": true,
+      "reqAuthInheritQuery": false,
+      "reqAuthEverytime": false
     },
     "defaultchild": {
       "dn": "",
