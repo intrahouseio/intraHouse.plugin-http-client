@@ -98,7 +98,7 @@ function req({ url, type, headers, body, statusCode, headerCL }) {
     }
     request({ uri: url, method: type, headers, body }, function (error, response, body) {
       if (error === null && (statusCode ? response.statusCode === statusCode : true)) {
-        plugin.debug(`${type.toUpperCase()} ${url}\n---- BODY START ----\n${body}---- BODY END ----\n---- COOKIE START ----\n${response.headers['set-cookie'].join('\n')}\n---- COOKIE END ----\n\n`, 1);
+        plugin.debug(`${type.toUpperCase()} ${url}\n---- HEADERS START ----\n${JSON.stringify(response.headers, null, 2)}\n---- HEADERS END ----\n---- BODY START ----\n${body}---- BODY END ----\n\n`, 1);
         resolve(body);
       } else {
         const error_text = error ? error.message : `Response status code no match, ${statusCode} != ${response.statusCode}`;
