@@ -255,13 +255,20 @@ function worker(item) {
 plugin.on('device_action', (device) => {
   if (STORE.actions[device.dn] && STORE.actions[device.dn][device.prop]) {
     const action = STORE.actions[device.dn][device.prop];
-
+    if (device.prop === 'set') {
+      action.url = action.url.replace(/\${value}/gim, device.val);
+    }
+    plugin.debug(action.url)
     req(action)
       .then(res => {
         if (action.updatestate) {
           task.bind(STORE.tasks[action.task]).call();
         } else {
-          plugin.setDeviceValue([{ dn: device.dn, value: device.prop === 'on' ? 1 : 0 }]);
+          if (device.prop === 'set') {
+            plugin.setDeviceValue([{ dn: device.dn, value: device.val }]);
+          } else {
+            plugin.setDeviceValue([{ dn: device.dn, value: device.prop === 'on' ? 1 : 0 }]);
+          }
         }
       })
       .catch(e => plugin.setDeviceValue([{ dn: device.dn, err: e.message }]));

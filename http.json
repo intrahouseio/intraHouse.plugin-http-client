@@ -111,7 +111,7 @@
           "actions": { "name": "$Actions", "order": 8, "type": "multi",
             "data": {
               "scheme": {
-                  "act": { "name": "$Action", "type": "autocomplete", "order": 0, "data":[{"id":"on", "name":"on"}, {"id":"off", "name":"off"},{"id":"toggle", "name":"toggle"}] },
+                  "act": { "name": "$Action", "type": "autocomplete", "order": 0, "data":[{"id":"on", "name":"on"}, {"id":"off", "name":"off"},{"id":"toggle", "name":"toggle"},{"id":"set", "name":"set"}] },
                   "url": { "name": "$Url", "order": 0, "type": "STRING" },
                   "type": { "name": "$Type", "order": 1,  "type": "autocomplete",
                     "data": [
