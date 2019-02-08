@@ -3,7 +3,9 @@ const Plugin = require('./lib/plugin');
 
 const plugin = new Plugin();
 
-const STORE = {};
+const STORE = {
+  sessions: {},
+};
 
 function createFunction(value) {
   try {
@@ -50,9 +52,28 @@ function prepareParent(value) {
       return l;
     },{});
 
-  const body = !(value.type === 'get' || value.type === 'head') ? value.body : null
+    if (value.reqAuthHeaders) {
+      const reqAuthHeaders = value.reqAuthHeaders
+        .split(/\r?\n/)
+        .reduce((l, n) => {
+          const temp = n.split(':');
+          if (temp.length == 2) {
+            return {
+              ...l,
+              [temp[0].replace(/\s/g, '')]: temp[1]
+            }
+          }
+          return l;
+        },{});
 
-  return { ...value, headers, body };
+        const body = !(value.type === 'get' || value.type === 'head') ? value.body : null;
+        const reqAuthBody = !(value.reqAuthType === 'get' || value.reqAuthType === 'head') ? value.reqAuthBody : null;
+
+        return { ...value, headers, reqAuthHeaders, body, reqAuthBody };
+    } else {
+      const body = !(value.type === 'get' || value.type === 'head') ? value.body : null;
+      return { ...value, headers, body };
+    }
 }
 
 function prepareTasks(data) {
@@ -91,16 +112,34 @@ function prepareActions(data) {
   return actions;
 }
 
-function req({ url, type, headers, body, statusCode, headerCL }) {
+function reqAuth({ id, reqAuth, reqAuthEverytime, reqAuthUrl, reqAuthType, reqAuthHeaders, reqAuthBody }) {
+  return new Promise((resolve, reject) => {
+    if (reqAuth && (reqAuthEverytime || STORE.sessions[id] === undefined)) {
+      STORE.sessions[id] = {};
+      STORE.sessions[id].jar = request.jar();
+      request({ uri: reqAuthUrl, method: reqAuthType, headers: reqAuthHeaders, body: reqAuthBody, followRedirect: false, jar: STORE.sessions[id].jar  }, function (error, response, body) {
+        resolve();
+      });
+    } else {
+      resolve()
+    }
+  });
+}
+
+function req({ id, url, type, headers, body, statusCode, headerCL, reqAuth }) {
   return new Promise((resolve, reject) => {
     if ( headerCL && !(type === 'get' || type === 'head')) {
       headers['Content-Length'] = body.length;
     }
-    request({ uri: url, method: type, headers, body }, function (error, response, body) {
+    const jar = STORE.sessions[id] ? STORE.sessions[id].jar : null;
+    request({ uri: url, method: type, headers, body, jar }, function (error, response, body) {
       if (error === null && (statusCode ? response.statusCode === statusCode : true)) {
-        plugin.debug(`${type.toUpperCase()} ${url}\n---- HEADERS START ----\n${JSON.stringify(response.headers, null, 2)}\n---- HEADERS END ----\n---- BODY START ----\n${body}---- BODY END ----\n\n`, 1);
+        plugin.debug(`${type.toUpperCase()} ${url}\n---- HEADERS START ----\n${JSON.stringify(response.headers, null, 2)}\n---- HEADERS END ----\n---- BODY START ----\n${body}---- BODY END ----\n\n`, 2);
         resolve(body);
       } else {
+        if (reqAuth) {
+          delete STORE.sessions[id];
+        }
         const error_text = error ? error.message : `Response status code no match, ${statusCode} != ${response.statusCode}`;
         plugin.debug(`${type.toUpperCase()} ${url}  error: ${error_text}`, 1);
         reject(error || Error(`Response status code no match, ${statusCode} != ${response.statusCode}`));
@@ -109,16 +148,16 @@ function req({ url, type, headers, body, statusCode, headerCL }) {
   });
 }
 
-function parser(text, values) {
+function parser(text, values, url) {
   return values
     .map(value => {
       switch (value.parseType) {
         case 'json':
-          return parserJSON(text, value);
+          return parserJSON(text, value, url);
         case 'text':
-          return parserREGEXP(text, value);
+          return parserREGEXP(text, value, url);
         case 'search':
-           return parserREGEXPTEST(text, value);
+           return parserREGEXPTEST(text, value, url);
         default:
           return {};
       }
@@ -126,7 +165,7 @@ function parser(text, values) {
     .filter(i => i.dn !== null);
 }
 
-function parserJSON(text, item) {
+function parserJSON(text, item, url) {
   try {
     if (typeof item.parse !== 'function') {
       return { dn: item.dn, err: item.parse };
@@ -143,7 +182,7 @@ function parserJSON(text, item) {
   }
 }
 
-function parserREGEXP(text, item) {
+function parserREGEXP(text, item, url) {
   try {
     if (item.parse === null) {
       const value = item.number ? Number(text) : text;
@@ -155,6 +194,7 @@ function parserREGEXP(text, item) {
     } else {
       const regex = item.parse;
       const values = regex.exec(text);
+      plugin.debug(`${url} --> values: ${JSON.stringify(values.slice(-2))}`, 1)
       const value = item.number ? Number(values[item.rescount]) : values[item.rescount];
       regex.exec('');
       if (item.number && isNaN(value)) {
@@ -168,11 +208,12 @@ function parserREGEXP(text, item) {
   }
 }
 
-function parserREGEXPTEST(text, item) {
+function parserREGEXPTEST(text, item, url) {
   try {
       const regex = item.parse;
       const test = regex.test(text);
       regex.test('');
+      plugin.debug(`${url} --> value: ${test}`, 1)
       if (test) {
         return { dn: item.dn, value: item.number ? Number(item.valueTrue) : item.valueTrue };
       } else {
@@ -188,13 +229,16 @@ function parserREGEXPTEST(text, item) {
 }
 
 function task() {
-  req(this)
-    .then(res => parser(res, this.values))
-    .then(values => {
-      if (values.length) {
-        plugin.setDeviceValue(values);
-      }
-    })
+  reqAuth(this)
+    .then(() =>
+      req(this)
+        .then(res => parser(res, this.values, this.url))
+        .then(values => {
+          if (values.length) {
+            plugin.setDeviceValue(values);
+          }
+        })
+    )
     .catch(e => plugin.setDeviceValue(this.values.map(item => ({ dn: item.dn, err: e.message }))));
 }
 
