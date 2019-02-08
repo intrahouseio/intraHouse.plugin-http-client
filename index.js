@@ -118,6 +118,10 @@ function reqAuth({ id, reqAuth, reqAuthEverytime, reqAuthUrl, reqAuthType, reqAu
       STORE.sessions[id] = {};
       STORE.sessions[id].jar = request.jar();
       request({ uri: reqAuthUrl, method: reqAuthType, headers: reqAuthHeaders, body: reqAuthBody, followRedirect: false, jar: STORE.sessions[id].jar  }, function (error, response, body) {
+        if (error === null) {
+          plugin.debug(`${reqAuthType.toUpperCase()} ${reqAuthUrl}\n---- HEADERS START ----\n${JSON.stringify(response.headers, null, 2)}\n---- HEADERS END ----\n---- BODY START ----\n${body}---- BODY END ----\n\n`, 2);
+
+        }
         resolve();
       });
     } else {
