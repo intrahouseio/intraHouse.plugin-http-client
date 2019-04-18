@@ -37,8 +37,8 @@ const config2 = [
     number: true,
     actions: [
       {
-        act: "on",
-        url: "http://localhost:2222",
+        act: "set",
+        url: "http://localhost:2222/test=1&data=${value}",
         type: "post",
         statusCode: 200,
         headers: "Accept-Language: ru-RU,ru;q=0.9,en-US;q=0.8,en;q=0.7\r\nUser-Agent: intraHouse (http-plugin)",
@@ -92,5 +92,5 @@ ps.on('close', code => {
 ps.send({type: 'debug', mode: true });
 
 setTimeout(() => {
-ps.send({ type: 'act', data: [ { dn: 'LAMP1', prop: 'on' } ] });
+ps.send({ type: 'act', data: [ { dn: 'LAMP1', prop: 'set', val: 50 } ] });
 }, 1000)

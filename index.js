@@ -1,5 +1,6 @@
-const request = require('request');
 const Plugin = require('./lib/plugin');
+const request = require('request');
+
 
 const plugin = new Plugin();
 
@@ -255,11 +256,8 @@ function worker(item) {
 plugin.on('device_action', (device) => {
   if (STORE.actions[device.dn] && STORE.actions[device.dn][device.prop]) {
     const action = STORE.actions[device.dn][device.prop];
-    if (device.prop === 'set') {
-      action.url = action.url.replace(/\${value}/gim, device.val);
-    }
     plugin.debug(action.url)
-    req(action)
+    req(device.prop === 'set' ? Object.assign({}, action, { url: action.url.replace(/\${value}/gim, device.val) }) : action)
       .then(res => {
         if (action.updatestate) {
           task.bind(STORE.tasks[action.task]).call();
