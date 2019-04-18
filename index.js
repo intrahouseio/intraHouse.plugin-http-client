@@ -256,7 +256,11 @@ function worker(item) {
 plugin.on('device_action', (device) => {
   if (STORE.actions[device.dn] && STORE.actions[device.dn][device.prop]) {
     const action = STORE.actions[device.dn][device.prop];
-    plugin.debug(action.url)
+    if (device.prop === 'set') {
+      plugin.debug(action.url.replace(/\${value}/gim, device.val))
+    }else {
+      plugin.debug(action.url)
+    }
     req(device.prop === 'set' ? Object.assign({}, action, { url: action.url.replace(/\${value}/gim, device.val) }) : action)
       .then(res => {
         if (action.updatestate) {
