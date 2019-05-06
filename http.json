@@ -43,7 +43,7 @@
           "statusCode": { "name": "$StatusCode", "order": 4, "type": "NUMBER" },
           "headers": { "name": "$Headers", "order": 5, "type": "TEXTAREA" },
           "body": { "name": "$Body", "order": 8, "type": "TEXTAREA", "visible": "!(data.type === 'get' || data.type === 'head')" },
-          "reqAuth": { "name": "$reqAuthText", "order": 9, "type": "cb" }
+          "reqAuth": { "name": "$ReqAuthtext", "order": 9, "type": "cb" }
         }
       },
       "reqAuth": {
@@ -68,8 +68,7 @@
           "reqAuthStatusCode": { "name": "$StatusCode", "order": 4, "type": "NUMBER", "visible": "data.reqAuth" },
           "reqAuthHeaders": { "name": "$Headers", "order": 5, "type": "TEXTAREA", "visible": "data.reqAuth" },
           "reqAuthBody": { "name": "$Body", "order": 8, "type": "TEXTAREA", "visible": "data.reqAuth && !(data.reqAuthType === 'get' || data.reqAuthType === 'head')" },
-          "reqAuthInheritQuery": { "name": "$reqAuthQuery", "order": 9, "type": "cb", "visible": "data.reqAuth" },
-          "reqAuthEverytime": { "name": "$reqAuthEverytime", "order": 10, "type": "cb", "visible": "data.reqAuth" }
+          "reqAuthEverytime": { "name": "$ReqAuthEverytime", "order": 10, "type": "cb", "visible": "data.reqAuth" }
         }
       },
       "extended": {
