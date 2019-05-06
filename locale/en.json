@@ -22,5 +22,8 @@
   "Action":"Action",
   "ValueTrue":"Set value if true",
   "ValueFalse":"Set value if false",
-  "Updatestate": "Update status after command execution"
+  "Updatestate": "Update status after command execution",
+  "ReqAuthtext": "Preliminary authorization request",
+  "RequestAuth": "Authorization",
+  "ReqAuthEverytime": "Repeat every time (disable session)"
 }
