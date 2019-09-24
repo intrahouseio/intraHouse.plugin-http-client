@@ -277,6 +277,18 @@ plugin.on('device_action', (device) => {
   }
 });
 
+plugin.on('command', (command) => {
+  const url = command;
+  request({ uri: url, method: 'get' }, function (error, response, body) {
+    if (error === null) {
+      plugin.debug(`${type.toUpperCase()} ${url}\n---- HEADERS START ----\n${JSON.stringify(response.headers, null, 2)}\n---- HEADERS END ----\n---- BODY START ----\n${body}---- BODY END ----\n\n`, 2);
+    } else {
+      const error_text = error ? error.message : `Response status code no match, ${statusCode} != ${response.statusCode}`;
+      plugin.debug(`${type.toUpperCase()} ${url}  error: ${error_text}`, 1);
+    }
+  });
+});
+
 plugin.on('start', () => {
   STORE.tasks = prepareTasks(plugin.channels);
   STORE.actions = prepareActions(STORE.tasks);
