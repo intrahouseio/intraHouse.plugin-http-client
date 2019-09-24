@@ -92,5 +92,6 @@ ps.on('close', code => {
 ps.send({type: 'debug', mode: true });
 
 setTimeout(() => {
-ps.send({ type: 'act', data: [ { dn: 'LAMP1', prop: 'set', val: 50 } ] });
+  ps.send({ type: 'command', command: 'http://ya.ru' });
+// ps.send({ type: 'act', data: [ { dn: 'LAMP1', prop: 'set', val: 50 } ] });
 }, 1000)
