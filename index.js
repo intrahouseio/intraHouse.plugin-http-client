@@ -261,7 +261,10 @@ plugin.on('device_action', (device) => {
     }else {
       plugin.debug(action.url)
     }
-    req(device.prop === 'set' ? Object.assign({}, action, { url: action.url.replace(/\${value}/gim, device.val) }) : action)
+    req(device.prop === 'set' ? Object.assign({}, action, { 
+      url: action.url.replace(/\${value}/gim, device.val) ,
+      body: action.body.replace(/\${value}/gim, device.val)
+    }) : action)
       .then(res => {
         if (action.updatestate) {
           task.bind(STORE.tasks[action.task]).call();
