@@ -263,7 +263,7 @@ plugin.on('device_action', (device) => {
     }
     req(device.prop === 'set' ? Object.assign({}, action, { 
       url: action.url.replace(/\${value}/gim, device.val) ,
-      body: action.body.replace(/\${value}/gim, device.val)
+      body: action.body ? action.body.replace(/\${value}/gim, device.val) : action.body,
     }) : action)
       .then(res => {
         if (action.updatestate) {
